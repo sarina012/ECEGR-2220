@@ -156,38 +156,20 @@ begin
 	'0' when "010",
 	'0' when others;
 	
-
-
-	
 	PC: ProgramCounter PORT MAP (reset, clock, finWire, pcOut);
-
 	InstructionMemory: InstructionRAM PORT MAP (reset, clock, pcOut(31 DOWNTO 2), instruction1);
-	
 	ctrl: Control PORT MAP (clock, instruction1(6 DOWNTO 0), instruction1(14 DOWNTO 12), instruction1(31 DOWNTO 25), branch, memRead, memtoReg, aluCtrl, memWrite, aluSrc, regWrite, immGen);
-	
 	reg: Registers PORT MAP (instruction1(19 DOWNTO 15), instruction1(24 DOWNTO 20), instruction1(11 DOWNTO 7), dataMemMuxoutput, WriteCMD1, readData1, readData2);
-	
 	Reg2AluMUX: BusMux2to1 PORT MAP (aluSrc, readData2, immidiatepart, aluInput2);
-	
 	ALUModule: ALU PORT MAP (readData1, aluInput2, aluCtrl, isZero, aluResult);
-
 	offsetSubtractor: adder_subtracter PORT MAP (aluResult, X"10000000", '1', dataTemp, throwaway3); 
-	
 	newDataMemaddress <= dataTemp(31 downto 2);
-
 	DataMemory: RAM PORT MAP (reset, clock, memRead, memWrite, newDataMemaddress, readData2, dataMem);
-
 	Data2MemMUX: BusMux2to1 PORT MAP (memToReg, aluResult, dataMem, dataMemMuxoutput);
 
-
-
-
 	Adder1: adder_subtracter PORT MAP (pcOut, immidiatepart, '0', rightAddSum, throwaway1);
-
 	Adder2: adder_subtracter PORT MAP (pcOut, "00000000000000000000000000000100", '0', leftAddSum, throwaway2);
-
 	rightAdderMux: BusMux2to1 PORT MAP (BranchEqNotEq, leftAddSum, rightAddSum, finWire);
-	
 			
 end holistic;
 
